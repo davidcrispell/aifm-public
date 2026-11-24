@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en" data-live="false">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="description" content="Explore how different assumptions change AI research timelines with Boulder AI Safety at CU Boulder.">
+<meta name="theme-color" content="#f8f6ef">
+<title>Who builds the next AI? · Boulder AI Safety</title>
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #f8f6ef; --ink: #252923; --muted: #565b52; --rule: #cdcfc2;
+    --red: #a93823; --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: "Helvetica Neue", Arial, sans-serif; --mono: ui-monospace, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; color: var(--ink); background: var(--paper); font: 1rem/1.5 var(--sans); }
+  a { color: inherit; text-underline-offset: .2em; }
+  button, input { font: inherit; }
+  button, label { -webkit-tap-highlight-color: transparent; }
+  a:focus-visible, button:focus-visible, input:focus-visible + span, summary:focus-visible {
+    outline: 2px solid var(--red); outline-offset: 4px;
+  }
+  .page { width: min(86rem, 90%); margin-inline: auto; }
+  .mast { display: flex; justify-content: space-between; align-items: center; min-height: 5rem; gap: 1rem; border-bottom: 1px solid var(--ink); }
+  .brand { display: inline-flex; align-items: center; gap: .65rem; text-decoration: none; font: 1.55rem/1.1 var(--serif); letter-spacing: -.047em; }
+  .brand-mark { width: 1.1rem; height: 1.1rem; border-radius: 50%; background: linear-gradient(90deg, #272a23 35%, #aaa99e 85%, #deded4); }
+  .mast nav { display: flex; gap: 2rem; align-items: baseline; font-size: .86rem; }
+  .mast nav a { text-decoration: none; }
+  .mast nav a:hover, .source:hover { text-decoration: underline; }
+  .out { margin-left: .22em; font: .95em var(--sans); }
+  .skip { position: absolute; left: 1rem; top: -5rem; padding: .65rem; background: var(--paper); z-index: 1; }
+  .skip:focus { top: .5rem; }
+  .hero { display: grid; grid-template-columns: minmax(0,.83fr) minmax(0,1.17fr); align-items: center;
+    gap: clamp(2rem,4.4vw,5.5rem); padding-block: clamp(3.75rem,8.6vh,7rem) clamp(3rem,7.5vh,6.75rem); }
+  .eyebrow, .chart-unit, .source, .readout-label, .notes summary { font: 500 .68rem/1.5 var(--mono); letter-spacing: .075em; text-transform: uppercase; }
+  .eyebrow { display: flex; align-items: center; gap: .64rem; margin: 0 0 1.3rem; color: var(--muted); }
+  .eyebrow::before { content: ""; width: 1.55rem; height: 2px; background: var(--red); }
+  h1, h2, p, figure, fieldset { margin: 0; }
+  .lead { container-type: inline-size; }
+  h1 { font: 400 clamp(2.65rem, 16cqi, 6.8rem)/.98 var(--serif); letter-spacing: -.06em; }
+  h1 span { display: block; white-space: nowrap; }
+  h1 em { color: var(--red); font-weight: 400; }
+  .intro { font: 400 clamp(1.15rem,1.6vw,1.48rem)/1.45 var(--serif); margin-block: 1.45rem 1.65rem; max-width: 31ch; }
+  .join { display: inline-flex; align-items: center; gap: 1.5rem; padding: .71rem 1.1rem; background: var(--ink); color: var(--paper); border-radius: 3px; font-weight: 500; font-size: .9rem; text-decoration: none; }
+  .join:hover { background: var(--red); }
+  .plot-panel { min-width: 0; scroll-margin-top: 1rem; }
+  .panel-head, .plot-meta, .readout { display: flex; align-items: center; justify-content: space-between; gap: .9rem; }
+  .panel-head { border-top: 2px solid var(--ink); border-bottom: 1px solid var(--rule); padding-block: .72rem; }
+  .panel-head h2 { font: 400 clamp(1.35rem,2vw,1.9rem)/1.2 var(--serif); letter-spacing: -.035em; }
+  .replay { display: inline-flex; align-items: center; gap: .45em; background: none; border: 0; color: var(--muted); padding: .55rem .12rem .55rem .5rem; cursor: pointer; font-size: .79rem; }
+  .replay:hover { color: var(--red); }
+  .replay svg { width: 1rem; height: 1rem; }
+    .reset { font:.78rem var(--sans); color:var(--red); padding:.45rem .1rem; background:none; border:0; cursor:pointer; white-space:nowrap; text-underline-offset:.2em; }
+    .reset:enabled:hover, a:hover { text-decoration:underline; }
+    .reset:disabled { color:#6a6b62; cursor:default; }
+    :focus-visible { outline:2px solid var(--red); outline-offset:3px; }
+    .plot-head { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:.25rem .6rem; }
+    .measures { display:flex; gap:.12rem; border:1px solid var(--rule); border-radius:3px; padding:.12rem; }
+    .measures label { position:relative; cursor:pointer; }
+    .measures span { display:block; font:.77rem/1.25 var(--sans); padding:.42rem .58rem; border-radius:2px; }
+    .measures input:checked + span { color:var(--paper); background:#373c34; }
+    .measures input:focus-visible + span { outline:2px solid var(--red); outline-offset:2px; }
+    .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+    .legend { display:flex; gap:.65rem; color:var(--muted); font:.69rem var(--sans); }
+    .legend span { display:inline-flex; gap:.28rem; align-items:center; }
+    .legend span::before { content:""; width:1.1rem; border-top:2px solid var(--red); }
+    .legend .baseline::before { border-top:2px dashed #686f63; }
+    .legend [hidden] { display:none; }
+    .unit { margin-top:.65rem; font:.68rem/1.4 var(--mono); color:var(--muted); }
+    #chart { display:block; width:100%; height:clamp(9.5rem,32vw,13.75rem); }
+    #chart text { font:10.5px var(--mono); fill:var(--muted); }
+    #chart .focus-label { font-size:11px; fill:var(--ink); }
+    .dates { display:grid; grid-template-columns:1fr 1fr; border-block:1px solid var(--rule); padding:.65rem 0 .75rem; }
+    .dates div + div { padding-left:1rem; border-left:1px solid var(--rule); }
+    dt,.setting label { font:.8rem/1.35 var(--sans); }
+    dd { font:400 clamp(1.6rem,4.9vw,2.05rem)/1.12 var(--serif); color:var(--red); letter-spacing:-.045em; margin-top:.16rem; }
+    .controls { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.5rem 1.35rem; margin:.8rem 0 .4rem; }
+    .setting { display:grid; grid-template-rows:1fr auto auto; align-items:end; }
+    .setting label { font-weight:500; }
+    output { font:.74rem/1.5 var(--mono); color:var(--red); }
+    input[type=range] { width:100%; margin:.12rem 0 0; accent-color:var(--red); cursor:pointer; height:1.45rem; }
+    #network-status { margin:.35rem 0; color:var(--muted); font-size:.8rem; }
+    .fine { display:inline-flex; align-items:center; gap:.4rem; color:var(--muted); cursor:pointer; font:.76rem var(--sans); margin:.15rem 0 .65rem; }
+    .fine input { margin:0; accent-color:var(--red); }
+    [hidden] { display:none; }
+  .plot-head { margin-top:.8rem; }
+  #chart { height:clamp(12rem,17vw,17rem); }
+  .chart-actions { display:flex; align-items:baseline; justify-content:space-between; gap:.75rem; }
+  .chart-actions .fine { margin-bottom:.3rem; }
+  .dates { margin-inline:0; }
+  .dates dd { margin-inline:0; }
+  figcaption { border-top:1px solid var(--rule); padding-top:.55rem; font:.73rem/1.45 var(--sans); color:var(--muted); }
+  .explanation a { color:var(--ink); }
+  @media (max-width:460px) {
+    .measures span { padding:.42rem; }
+    .controls { gap:.7rem; }
+    .dates div + div { padding-left:.65rem; }
+  }
+  .notes { border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
+  .notes summary { display: flex; justify-content: space-between; align-items: center; padding: 1.15rem 0; font-size: .74rem; cursor: pointer; list-style: none; }
+  .notes summary::-webkit-details-marker { display: none; }
+  .notes summary::after { content: "+"; font: 1.45rem/1 var(--serif); }
+  .notes[open] summary::after { content: "−"; }
+  .explanation { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 4rem; padding: .4rem 0 1.8rem; }
+  .explanation p { max-width: 60ch; color: var(--muted); font-size: .92rem; }
+  .explanation strong { color: var(--ink); }
+  footer { padding: 1.25rem 0 2rem; color: var(--muted); display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; font: .73rem var(--sans); }
+  @media (min-width: 1400px) { .hero { min-height: min(43rem, 75vh); } }
+  @media (max-width: 850px) {
+    .hero { grid-template-columns: 1fr; gap: 2rem; padding-block: 2.75rem; }
+    .lead { max-width: 42rem; }
+    h1 { font-size: clamp(2.65rem,11cqi,5.5rem); }
+    h1 span { display: inline; }
+    .intro { max-width: 45ch; margin-block: 1rem 1.15rem; }
+    #chart { height: clamp(14rem,36vw,19rem); }
+  }
+  @media (max-width: 530px) {
+    .mast { min-height: 3.75rem; }
+    .mast nav { gap: .75rem; font-size: .77rem; }
+    .mast nav .jump { display: none; }
+    .brand { font-size: 1.22rem; }
+    .brand-mark { width: .9rem; height: .9rem; }
+    .hero { padding-block: 2.15rem 1.8rem; gap: 1.75rem; }
+    .eyebrow { margin-bottom: .7rem; font-size: .59rem; }
+    h1 { font-size: clamp(2.6rem,15.5cqi,4.2rem); }
+    h1 span { display: block; }
+    .intro { font-size: 1.12rem; }
+    .explanation { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#forecast">Skip to forecast</a>
+<div class="page">
+  <header class="mast">
+    <a class="brand" href="#main"><span class="brand-mark" aria-hidden="true"></span>Boulder AI Safety</a>
+    <nav aria-label="Main navigation">
+      <a class="jump" href="#forecast">Forecast</a>
+      <a href="https://campusgroups.colorado.edu/AISI/">BuffConnect <span class="out" aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero" aria-labelledby="headline">
+      <div class="lead">
+        <p class="eyebrow">AI safety at CU Boulder</p>
+        <h1 id="headline"><span>Who builds</span> <span>the <em>next AI?</em></span></h1>
+        <p class="intro">An AI that can choose its own experiments can help build its successor. At CU Boulder, we study how to keep that process under human control.</p>
+        <a class="join" href="https://campusgroups.colorado.edu/AISI/">Join Boulder AI Safety <span aria-hidden="true">↗</span></a>
+      </div>
+      <figure class="plot-panel" id="forecast" aria-labelledby="plot-title">
+        <div class="panel-head">
+          <h2 id="plot-title">AI Futures Model</h2>
+          <button class="replay" type="button" id="replay" aria-label="Replay forecast animation">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7a6.3 6.3 0 1 1-.4 5M4 3v4h4"/></svg>Replay
+          </button>
+        </div>
+    <div class="plot-head">
+      <fieldset class="measures">
+        <legend class="sr-only">Chart measure</legend>
+        <label><input class="sr-only" type="radio" name="measure" value="1" checked><span>Research judgment</span></label>
+        <label><input class="sr-only" type="radio" name="measure" value="2"><span>Coding automation</span></label>
+      </fieldset>
+      <div class="legend"><span id="selected-label">Baseline</span><span class="baseline" hidden>Baseline</span></div>
+    </div>
+    <p class="unit" id="unit">Percentile among human AI researchers</p>
+    <svg id="chart" role="img" aria-labelledby="chart-title chart-description" tabindex="0">
+      <title id="chart-title">AI research judgment over time</title>
+      <desc id="chart-description">Use the left and right arrow keys to inspect the model output.</desc>
+      <defs><clipPath id="reveal"><rect id="sweep" width="100%" height="100%"/></clipPath><linearGradient id="wash" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#ad4d30" stop-opacity=".19"/><stop offset="1" stop-color="#ad4d30" stop-opacity=".02"/></linearGradient></defs>
+      <g id="axes" aria-hidden="true"></g><g id="lines" clip-path="url(#reveal)" aria-hidden="true"></g><g id="probe" aria-hidden="true"></g>
+    </svg>
+    <div id="point-value" class="sr-only" role="status"></div>
+  <dl class="dates" aria-live="polite" aria-atomic="true">
+    <div><dt>Automated coder</dt><dd id="ac">—</dd></div>
+    <div><dt>Superhuman AI researcher</dt><dd id="sar">—</dd></div>
+  </dl>
+  <div class="controls">
+    <div class="setting"><label for="doubling">Coding speedup doubling time</label><output id="doubling-value" for="doubling"></output><input type="range" id="doubling" disabled></div>
+    <div class="setting"><label for="taste">Research judgment gain</label><output id="taste-value" for="taste"></output><input type="range" id="taste" disabled></div>
+  </div>
+  <div class="chart-actions"><label class="fine"><input type="checkbox" id="fine">Fine adjustments</label><button class="reset" type="button" id="reset" disabled>Reset assumptions</button></div>
+  <p id="network-status" role="status" hidden></p>
+        <figcaption>Powered by the <a href="https://github.com/AI-Futures-Project/aifm-public/tree/1c40ecdb246c25980515441a66571931c5604e11">AI Futures Project’s public model</a>.</figcaption>
+        <noscript>Enable JavaScript to change the assumptions and explore the model.</noscript>
+      </figure>
+    </section>
+    <details class="notes" id="method">
+      <summary>How to read the forecast</summary>
+      <div class="explanation">
+      <p>As AI takes on coding and chooses better experiments, it can speed up the research that improves the next model. Each line shows one trajectory under the selected assumptions. The dashed line appears when you move away from the baseline.</p>
+      <p><strong>Coding speedup doubling time</strong> is the time it takes the extra coding productivity from AI to double near the calibration date. For example, a change from 20% faster to 40% faster doubles the gain.</p>
+      <p><strong>Research judgment gain</strong> is measured in human standard deviations (SD) per progress-year. A progress-year is the capability gain from one year at the calibration date’s pace. If progress accelerates, that gain takes less calendar time.</p>
+      <p>The automated coder milestone requires full automation of an AI project’s coding work. The superhuman AI researcher milestone also requires experiment selection at the 99.9th percentile of human AI researchers.</p>
+      <p>The baseline uses the public model’s released reference parameters and input series. The model calibrates coding automation from observed productivity gains and simulates 2015–2050. The chart shows 2026–2030. The dates are conditional model outputs.</p>
+      <p>Fine adjustments run the Python model for values between the preset slider positions. On a static site, the first custom run downloads the Python runtime. <a href="https://github.com/davidcrispell/aifm-public" target="_blank" rel="noopener">BAIS model fork</a> · <a href="https://github.com/AI-Futures-Project/aifm-public/blob/1c40ecdb246c25980515441a66571931c5604e11/progress_model/README.md" target="_blank" rel="noopener">Equations and assumptions</a></p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Boulder AI Safety</span><span>University of Colorado Boulder</span></footer>
+</div>
+<script id="engine-archive" type="application/octet-stream">{{AIFP_ENGINE}}</script>
+<script id="worker-source" type="text/plain">{{AIFP_WORKER}}</script>
+<script id="simulations" type="application/json">{{AIFP_RUNS}}</script>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const data = JSON.parse($('simulations').textContent);
+  const live = document.documentElement.dataset.live === 'true';
+  const key = (d, t) => d.toFixed(1) + '/' + t.toFixed(1);
+  const baseline = data.runs[key(...data.base)];
+  const controls = [$('doubling'), $('taste')];
+  const labels = ['Percentile among human AI researchers', 'Share of coding work automated (%)'];
+  const titles = ['AI research judgment over time', 'AI coding automation over time'];
+  const chart = $('chart');
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const dateFormat = new Intl.DateTimeFormat('en-US', {month:'short', year:'numeric', timeZone:'UTC'});
+  let selected = baseline, applied = data.base, measure = 1, geometry, probeIndex = null;
+  let timer, pending, worker, revision = 0;
+  function dateLabel(year) {
+    if (year === null) return 'Beyond model horizon';
+    const whole = Math.floor(year);
+    const jan = Date.UTC(whole, 0), next = Date.UTC(whole + 1, 0);
+    return dateFormat.format(new Date(jan + (year - whole) * (next - jan)));
+  }
+  function element(parent, name, attrs, label) {
+    const node = document.createElementNS(svgNS, name);
+    for (const [k,v] of Object.entries(attrs)) node.setAttribute(k,v);
+    if (label !== undefined) node.textContent = label;
+    parent.append(node);
+    return node;
+  }
+  function inspect(index, announce = false) {
+    probeIndex = index;
+    const probe = $('probe');
+    probe.replaceChildren();
+    if (index === null || !geometry) return;
+    const point = selected.points[index];
+    const {x,y,top,bottom,width} = geometry;
+    const px = x(point[0]), py = y(point[measure]);
+    const number = point[measure].toFixed(1);
+    const value = measure === 1 ? 'percentile ' + number : number + '% automated';
+    const label = dateLabel(point[0]) + ' · ' + value;
+    element(probe,'line',{x1:px,x2:px,y1:top,y2:bottom,stroke:'#878a7e','stroke-dasharray':'2 3'});
+    element(probe,'circle',{cx:px,cy:py,r:4,fill:'#993b27',stroke:'#faf9f5','stroke-width':1.5});
+    element(probe,'text',{x:px < width / 2 ? px + 3 : px - 3,y:12,'text-anchor':px < width / 2 ? 'start' : 'end',class:'focus-label'},label);
+    if (announce) $('point-value').textContent = label;
+  }
+  function draw() {
+    const {width,height} = chart.getBoundingClientRect();
+    if (width < 1 || height < 1) return;
+    chart.setAttribute('viewBox','0 0 ' + width + ' ' + height);
+    const left = 31, right = width - 14, top = 23, bottom = height - 23;
+    const years = baseline.points;
+    const start = years[0][0], end = years[years.length-1][0];
+    const x = year => left + (year-start)/(end-start)*(right-left);
+    const y = pct => bottom - pct/100*(bottom-top);
+    geometry = {x,y,top,bottom,width};
+    const axes = $('axes'), lines = $('lines');
+    axes.replaceChildren(); lines.replaceChildren();
+    for (const pct of [0,25,50,75,100]) {
+      const py = y(pct);
+      element(axes,'line',{x1:left,x2:right,y1:py,y2:py,stroke:pct ? '#d1d2c7' : '#909486','stroke-dasharray':pct ? '2 4' : 'none'});
+      element(axes,'text',{x:left-7,y:py+3.5,'text-anchor':'end'},String(pct));
+    }
+    for (let year = start; year <= end; year++) {
+      const px = x(year);
+      element(axes,'line',{x1:px,x2:px,y1:bottom,y2:bottom+4,stroke:'#909486'});
+      element(axes,'text',{x:px,y:bottom+18,'text-anchor':'middle'},String(year));
+    }
+    const path = run => run.points.map((p,i) => (i ? 'L' : 'M') + x(p[0]).toFixed(2) + ',' + y(p[measure]).toFixed(2)).join(' ');
+    const curve = path(selected);
+    element(lines,'path',{d:curve + ' V' + bottom + ' H' + left + ' Z',fill:'url(#wash)'});
+    const changed = applied.some((v,i) => v !== data.base[i]);
+    if (changed) element(lines,'path',{d:path(baseline),fill:'none',stroke:'#686f63','stroke-width':1.6,'stroke-dasharray':'5 4'});
+    element(lines,'path',{d:curve,fill:'none',stroke:'#993b27','stroke-width':2.6,'stroke-linejoin':'round','stroke-linecap':'round'});
+    $('selected-label').textContent = changed ? 'Your run' : 'Baseline';
+    document.querySelector('.legend .baseline').hidden = !changed;
+    $('unit').textContent = labels[measure-1];
+    $('chart-title').textContent = titles[measure-1];
+    $('chart-description').textContent = labels[measure-1] + ' from ' + start + ' through ' + end + '. Use left and right arrow keys to inspect values.';
+    inspect(probeIndex);
+  }
+  function labelControls() {
+    const [d,t] = controls.map(el => Number(el.value));
+    const dLabel = d + ' months';
+    const tLabel = t + ' SD / progress-year';
+    $('doubling-value').value = dLabel;
+    $('taste-value').value = tLabel;
+    controls[0].setAttribute('aria-valuetext', dLabel);
+    controls[1].setAttribute('aria-valuetext', t + ' standard deviations per progress-year');
+    $('reset').disabled = d === data.base[0] && t === data.base[1];
+  }
+  function select(run, pair) {
+    selected = run; applied = pair; probeIndex = null;
+    $('ac').textContent = dateLabel(run.ac);
+    $('sar').textContent = dateLabel(run.sar);
+    draw();
+  }
+  function status(message) {
+    const el = $('network-status');
+    el.hidden = !message;
+    el.textContent = message;
+  }
+  function browserRun(pair, id, signal) {
+    return new Promise((resolve, reject) => {
+      let archive;
+      if (!worker) {
+        const url = URL.createObjectURL(new Blob([$('worker-source').textContent], {type:'text/javascript'}));
+        try { worker = new Worker(url); } finally { URL.revokeObjectURL(url); }
+        archive = $('engine-archive').textContent;
+      }
+      const active = worker;
+      function clear() {
+        active.removeEventListener('message', result);
+        active.removeEventListener('error', fail);
+        signal.removeEventListener('abort', abort);
+      }
+      function abort() {
+        clear();
+        reject(new DOMException('Run superseded','AbortError'));
+      }
+      function fail() {
+        clear();
+        active.terminate();
+        worker = null;
+        reject(new Error('Browser solver unavailable'));
+      }
+      function result({data:message}) {
+        if (message.id !== id) return;
+        if (message.error) { fail(); return; }
+        if (message.phase) { status('Calculating this run…'); return; }
+        clear();
+        resolve(message.run);
+      }
+      active.addEventListener('message', result);
+      active.addEventListener('error', fail);
+      signal.addEventListener('abort', abort, {once:true});
+      active.postMessage({id,pair,archive,baseline:{inputs:data.base,ac:baseline.ac,sar:baseline.sar}});
+    });
+  }
+  function update() {
+    const pair = controls.map(el => Number(el.value));
+    labelControls();
+    clearTimeout(timer);
+    if (pending) pending.abort();
+    const current = ++revision;
+    if (data.doublings.includes(pair[0]) && data.tastes.includes(pair[1])) {
+      select(data.runs[key(...pair)], pair);
+      status('');
+      return;
+    }
+    status(live || worker ? 'Calculating this run…' : 'Loading the Python model for fine adjustments…');
+    timer = setTimeout(async () => {
+      const request = new AbortController();
+      pending = request;
+      try {
+        let run;
+        if (live) {
+          const query = new URLSearchParams({doubling:pair[0],taste:pair[1]});
+          const response = await fetch('api/trajectory?' + query, {signal:request.signal});
+          if (!response.ok) throw new Error('Model request failed');
+          run = await response.json();
+        } else {
+          run = await browserRun(pair, current, request.signal);
+        }
+        if (current === revision) { select(run, pair); status(''); }
+      } catch (error) {
+        if (current === revision && error.name !== 'AbortError') {
+          controls.forEach((el,i) => { el.value = applied[i]; });
+          labelControls();
+          status('Could not load this run. Showing the previous settings. The preset slider positions are available offline.');
+        }
+      } finally {
+        if (pending === request) pending = null;
+      }
+    }, 150);
+  }
+  [data.doublings,data.tastes].forEach((values,i) => {
+    const input = controls[i];
+    input.min = values[0]; input.max = values[values.length-1];
+    input.step = (values[1] - values[0]).toFixed(1);
+    input.value = data.base[i];
+    input.disabled = false;
+    input.addEventListener('input', update);
+  });
+  $('fine').checked = false;
+  $('fine').addEventListener('change', () => {
+    const fine = $('fine').checked;
+    [data.doublings,data.tastes].forEach((values,i) => {
+      const input = controls[i], value = Number(input.value);
+      input.step = fine ? '0.05' : (values[1] - values[0]).toFixed(1);
+      if (!fine) input.value = values.reduce((a,b) => Math.abs(a-value) <= Math.abs(b-value) ? a : b);
+    });
+    update();
+  });
+  $('reset').addEventListener('click', () => {
+    controls.forEach((el,i) => { el.value = data.base[i]; });
+    update();
+  });
+  document.querySelectorAll('[name="measure"]').forEach(input => input.addEventListener('change', () => {
+    measure = Number(input.value); draw();
+  }));
+  chart.addEventListener('pointermove', e => {
+    if (!geometry) return;
+    const px = e.clientX - chart.getBoundingClientRect().left;
+    const nearest = selected.points.reduce((best,p,i,points) =>
+      Math.abs(geometry.x(p[0])-px) < Math.abs(geometry.x(points[best][0])-px) ? i : best, 0);
+    inspect(nearest);
+  });
+  chart.addEventListener('pointerleave', () => inspect(null));
+  chart.addEventListener('blur', () => inspect(null));
+  chart.addEventListener('keydown', e => {
+    const end = selected.points.length - 1;
+    const step = {ArrowLeft:-1,ArrowRight:1}[e.key];
+    if (step === undefined && e.key !== 'Home' && e.key !== 'End') return;
+    e.preventDefault();
+    const next = e.key === 'Home' ? 0 : e.key === 'End' ? end : (probeIndex ?? -step) + step;
+    inspect(Math.min(end,Math.max(0,next)),true);
+  });
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  let sweep;
+  function replay() {
+    if (sweep) sweep.cancel();
+    if (!motion.matches && typeof $('sweep').animate === 'function') {
+      sweep = $('sweep').animate([{transform:'scaleX(0)'}, {transform:'scaleX(1)'}],
+                                {duration:1900, easing:'linear'});
+    }
+  }
+  $('replay').addEventListener('click', replay);
+  motion.addEventListener('change', () => { if (sweep) sweep.cancel(); });
+  new ResizeObserver(draw).observe(chart);
+  update();
+  replay();
+})();
+</script>
+</body>
+</html>
